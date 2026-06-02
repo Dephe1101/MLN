@@ -18,9 +18,9 @@ export function StaticPage({ position, content, id }) {
         transform
         position={[0, 0, 0.005]}
         scale={0.42}
-        pointerEvents="none"
+        pointerEvents="auto"
       >
-        <div id={id} style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif" }}>
+        <div id={id} style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", overflow: 'hidden', boxSizing: 'border-box' }}>
           {content}
         </div>
       </Html>

@@ -66,9 +66,9 @@ export function Page({ isFlipped, frontContent, backContent }) {
             position={[0, 0, 0.005]} 
             rotation-y={0}
             scale={0.42}
-            pointerEvents="none"
+            pointerEvents="auto"
           >
-            <div id="flip-page-front" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', transition: 'opacity 0.1s' }}>
+            <div id="flip-page-front" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', transition: 'opacity 0.1s', overflow: 'hidden', boxSizing: 'border-box' }}>
               {frontContent}
             </div>
           </Html>
@@ -89,9 +89,9 @@ export function Page({ isFlipped, frontContent, backContent }) {
             position={[0, 0, 0.005]} 
             rotation-y={0}
             scale={0.42}
-            pointerEvents="none"
+            pointerEvents="auto"
           >
-            <div id="flip-page-back" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', transition: 'opacity 0.1s' }}>
+            <div id="flip-page-back" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', transition: 'opacity 0.1s', overflow: 'hidden', boxSizing: 'border-box' }}>
               {backContent}
             </div>
           </Html>

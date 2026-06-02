@@ -1,15 +1,14 @@
-@import "tailwindcss";
-
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import "tailwindcss";
 
 body {
   margin: 0;
-  display: flex;
+  display: grid;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  color: #fff;
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color: #f5efe0;
+  font-family: 'Lora', serif;
   overflow: hidden;
   background-color: #060000;
   background-image: radial-gradient(ellipse at top, #4a0a0a 0%, #060000 70%);

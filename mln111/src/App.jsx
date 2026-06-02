@@ -160,33 +160,34 @@ function App() {
       </div>
 
       {/* 3D Canvas */}
-      <Canvas camera={{ position: [0, 0, 8], fov: 45 }} shadows>
-        <ambientLight intensity={1.2} color="#ffffff" />
+      <Canvas camera={{ position: [0, 1.5, 8], fov: 40 }} shadows>
+        <ambientLight intensity={0.8} color="#fff1d6" />
         
         {/* Đèn chiếu thẳng vào mặt trang sách giống đèn đọc sách */}
-        <directionalLight position={[0, 0, 8]} intensity={1.5} color="#fff8e7" />
+        <directionalLight position={[0, 6, 8]} intensity={1.2} color="#ffe7b3" />
         
         {/* Ánh sáng chính tạo bóng đổ */}
         <spotLight 
-          position={[6, 12, 6]} 
-          angle={0.3} 
-          penumbra={1} 
-          intensity={12} 
+          position={[5, 9, 6]} 
+          angle={0.35} 
+          penumbra={0.8} 
+          intensity={4.5} 
           castShadow 
           shadow-mapSize={[1024, 1024]}
           shadow-bias={-0.0001}
+          color="#ffd9a5"
         />
 
         {/* Ánh sáng phụ làm sáng các góc khuất */}
         <spotLight 
-          position={[-6, 10, -2]} 
-          angle={0.5} 
-          penumbra={1} 
-          intensity={6} 
-          color="#a1c4fd"
+          position={[-5, 8, -2]} 
+          angle={0.45} 
+          penumbra={0.8} 
+          intensity={2.5} 
+          color="#f6e6c3"
         />
 
-        <Float speed={1.5} rotationIntensity={0.05} floatIntensity={0.1}>
+        <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.3}>
           <Suspense fallback={null}>
             <group position={[0, -0.1, 0]} scale={0.95}>
               {isOpen ? (
@@ -208,12 +209,14 @@ function App() {
         </Float>
 
         <OrbitControls 
-          enableZoom={false} 
-          enablePan={false} 
-          minAzimuthAngle={-0.3} 
-          maxAzimuthAngle={0.3} 
-          minPolarAngle={Math.PI / 2 - 0.2} 
-          maxPolarAngle={Math.PI / 2 + 0.2}
+          enableZoom={true} 
+          enablePan={true} 
+          minDistance={6} 
+          maxDistance={10} 
+          minAzimuthAngle={-0.6} 
+          maxAzimuthAngle={0.6} 
+          minPolarAngle={Math.PI / 2 - 0.35} 
+          maxPolarAngle={Math.PI / 2 + 0.25}
           makeDefault
         />
 
