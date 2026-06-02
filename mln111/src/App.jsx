@@ -268,12 +268,8 @@ function App() {
       <Canvas camera={{ position: [0, 0, 8], fov: 45 }} shadows>
         <ambientLight intensity={1.2} color="#ffffff" />
         
-<<<<<<< Updated upstream
         {/* Đèn chiếu thẳng vào mặt trang sách giống đèn đọc sách */}
         <directionalLight position={[0, 0, 8]} intensity={1.5} color="#fff8e7" />
-=======
-        <directionalLight position={[0, 6, 8]} intensity={1.2} color="#ffe7b3" />
->>>>>>> Stashed changes
         
         <spotLight 
           position={[6, 12, 6]} 

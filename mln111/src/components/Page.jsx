@@ -107,11 +107,7 @@ export function Page({ flipState, frontContent, backContent, onAnimationDone }) 
             scale={0.42}
             pointerEvents="none"
           >
-<<<<<<< Updated upstream
-            <div id="flip-page-front" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', transition: 'opacity 0.1s' }}>
-=======
             <div id="flip-page-front" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', overflow: 'hidden', boxSizing: 'border-box' }}>
->>>>>>> Stashed changes
               {frontContent}
             </div>
           </Html>
@@ -134,11 +130,7 @@ export function Page({ flipState, frontContent, backContent, onAnimationDone }) 
             scale={0.42}
             pointerEvents="none"
           >
-<<<<<<< Updated upstream
-            <div id="flip-page-back" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', transition: 'opacity 0.1s' }}>
-=======
             <div id="flip-page-back" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', overflow: 'hidden', boxSizing: 'border-box' }}>
->>>>>>> Stashed changes
               {backContent}
             </div>
           </Html>
