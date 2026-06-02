@@ -1,51 +1,90 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useLayoutEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useTexture, Html } from '@react-three/drei';
 import * as THREE from 'three';
 
-export function Page({ isFlipped, frontContent, backContent }) {
+export function Page({ flipState, frontContent, backContent, onAnimationDone }) {
   const groupRef = useRef();
   const texture = useTexture('/page.png');
+  const isAnimating = useRef(false);
+  const targetRotation = useRef(0);
+
+  const updateVisibility = (rotY) => {
+    const frontPage = document.getElementById('flip-page-front');
+    const backPage = document.getElementById('flip-page-back');
+    const page4 = document.getElementById('static-page-4');
+    const page1 = document.getElementById('static-page-1');
+
+    if (flipState === 'none') {
+      if (frontPage) frontPage.style.opacity = '0';
+      if (backPage) backPage.style.opacity = '0';
+      if (page4) page4.style.opacity = '1';
+      if (page1) page1.style.opacity = '1';
+    } else {
+      if (frontPage) frontPage.style.opacity = rotY > -Math.PI / 2 ? '1' : '0';
+      if (backPage) backPage.style.opacity = rotY < -Math.PI / 2 ? '1' : '0';
+      if (page4) page4.style.opacity = Math.abs(rotY) > (Math.PI / 2) ? '1' : '0';
+      if (page1) page1.style.opacity = Math.abs(rotY + Math.PI) > (Math.PI / 2) ? '1' : '0';
+    }
+  };
+
+  useLayoutEffect(() => {
+    if (!groupRef.current) return;
+
+    if (flipState === 'forward') {
+      groupRef.current.rotation.y = 0;
+      targetRotation.current = -Math.PI;
+      isAnimating.current = true;
+      updateVisibility(0);
+    } else if (flipState === 'backward') {
+      groupRef.current.rotation.y = -Math.PI;
+      targetRotation.current = 0;
+      isAnimating.current = true;
+      updateVisibility(-Math.PI);
+    } else {
+      // none
+      groupRef.current.rotation.y = 0;
+      targetRotation.current = 0;
+      isAnimating.current = false;
+      groupRef.current.position.z = 0.02;
+      groupRef.current.rotation.x = 0;
+      groupRef.current.rotation.z = 0;
+      updateVisibility(0);
+    }
+  }, [flipState]);
 
   useFrame((state, delta) => {
-    const targetRotation = isFlipped ? -Math.PI : 0;
-    
+    if (!groupRef.current) return;
+
+    if (!isAnimating.current) {
+      // Ensure visibility is correct when not animating
+      updateVisibility(groupRef.current.rotation.y);
+      return;
+    }
+
     let nextRot = THREE.MathUtils.damp(
       groupRef.current.rotation.y,
-      targetRotation,
-      4.5, // Tốc độ lật vừa phải, mượt nhưng không bị chậm lề mề
+      targetRotation.current,
+      4.5, // Tốc độ lật
       delta
     );
-    // Giữ nguyên ngưỡng snap êm ái
-    if (Math.abs(nextRot - targetRotation) < 0.001) nextRot = targetRotation;
+
+    if (Math.abs(nextRot - targetRotation.current) < 0.01) {
+      nextRot = targetRotation.current;
+      isAnimating.current = false;
+      if (onAnimationDone) onAnimationDone();
+    }
+    
     groupRef.current.rotation.y = nextRot;
 
     const progress = Math.abs(groupRef.current.rotation.y / Math.PI);
     const arc = Math.sin(progress * Math.PI);
 
-    // Hạ thấp độ bồng bềnh xuống 0.6 để trang giấy bám sát vào khuôn sách
     groupRef.current.position.z = 0.02 + arc * 0.6;
-    // Độ xoắn vặn cực nhỏ chỉ để tạo cảm giác giấy mỏng, tuyệt đối không văng ra ngoài
     groupRef.current.rotation.x = arc * 0.02; 
-    groupRef.current.rotation.z = isFlipped ? -arc * 0.01 : arc * 0.01;
+    groupRef.current.rotation.z = targetRotation.current === -Math.PI ? -arc * 0.01 : arc * 0.01;
 
-    const rotY = groupRef.current.rotation.y;
-    
-    // Mặt trước trang lật (Trang 2)
-    const frontPage = document.getElementById('flip-page-front');
-    if (frontPage) frontPage.style.opacity = rotY > -Math.PI / 2 ? '1' : '0';
-
-    // Mặt sau trang lật (Trang 3)
-    const backPage = document.getElementById('flip-page-back');
-    if (backPage) backPage.style.opacity = rotY < -Math.PI / 2 ? '1' : '0';
-    
-    // Trang tĩnh bên phải (Trang 4) - CHỈ BẬT KHI TRANG LẬT ĐÃ BAY QUA 90 ĐỘ
-    const page4 = document.getElementById('static-page-4');
-    if (page4) page4.style.opacity = Math.abs(rotY) > (Math.PI / 2) ? '1' : '0';
-
-    // Trang tĩnh bên trái (Trang 1) - CHỈ BẬT KHI TRANG LẬT CÒN BÊN PHẢI 90 ĐỘ
-    const page1 = document.getElementById('static-page-1');
-    if (page1) page1.style.opacity = Math.abs(rotY + Math.PI) > (Math.PI / 2) ? '1' : '0';
+    updateVisibility(groupRef.current.rotation.y);
   });
 
   return (
@@ -68,7 +107,11 @@ export function Page({ isFlipped, frontContent, backContent }) {
             scale={0.42}
             pointerEvents="none"
           >
+<<<<<<< Updated upstream
             <div id="flip-page-front" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', transition: 'opacity 0.1s' }}>
+=======
+            <div id="flip-page-front" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', overflow: 'hidden', boxSizing: 'border-box' }}>
+>>>>>>> Stashed changes
               {frontContent}
             </div>
           </Html>
@@ -91,7 +134,11 @@ export function Page({ isFlipped, frontContent, backContent }) {
             scale={0.42}
             pointerEvents="none"
           >
+<<<<<<< Updated upstream
             <div id="flip-page-back" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', transition: 'opacity 0.1s' }}>
+=======
+            <div id="flip-page-back" style={{ width: '280px', height: '430px', padding: '10px 15px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', userSelect: 'none', fontFamily: "'Lora', serif", backfaceVisibility: 'hidden', overflow: 'hidden', boxSizing: 'border-box' }}>
+>>>>>>> Stashed changes
               {backContent}
             </div>
           </Html>
