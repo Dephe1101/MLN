@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+@import "tailwindcss";
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  color: #fff;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  background-color: #060000;
+  background-image: radial-gradient(ellipse at top, #4a0a0a 0%, #060000 70%);
+}
+
+/* Animated Cyberpunk/Synthwave 3D Floor Grid */
+body::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -50%;
+  width: 200%;
+  height: 60vh;
+  background-image: 
+    linear-gradient(rgba(212, 175, 55, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 175, 55, 0.2) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform-origin: bottom;
+  transform: perspective(600px) rotateX(75deg);
+  animation: gridMove 3s linear infinite;
+  z-index: -2;
+  /* Fade out grid into the dark horizon */
+  mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
+}
+
+@keyframes gridMove {
+  from { background-position: 0 0; }
+  to { background-position: 0 60px; }
+}
+
+.glass-panel {
+  background: rgba(26, 15, 10, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+}
