@@ -1,48 +1,61 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState, useCallback, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Float, OrbitControls, ContactShadows } from '@react-three/drei';
 import './index.css';
 
 import { BookBase } from './components/BookBase';
 import { ClosedBook } from './components/ClosedBook';
-import { StaticPage } from './components/StaticPage';
 import { Page } from './components/Page';
-import { PageContent } from './components/PageContent';
-import { bookData } from './data/data';
+import { pageContents, TOTAL_SHEETS, getChapterAtSpread } from './content/content';
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0); // 0 = all right, TOTAL_SHEETS = all left
 
-  // Styling chung cho các nút bấm kính sang trọng
+  // Navigate to a specific spread (page index)
+  const goToPage = useCallback((spread) => {
+    const clamped = Math.max(0, Math.min(TOTAL_SHEETS, spread));
+    setCurrentPage(clamped);
+  }, []);
+
+  const handlePrev = () => goToPage(currentPage - 1);
+  const handleNext = () => goToPage(currentPage + 1);
+
+  const canGoPrev = currentPage > 0;
+  const canGoNext = currentPage < TOTAL_SHEETS;
+
+  // Current chapter info for the header
+  const chapterInfo = getChapterAtSpread(currentPage);
+
+  // Button styling
   const btnStyle = {
     color: '#f1f5f9',
     border: '1px solid rgba(226, 232, 240, 0.2)',
     padding: '12px 30px',
     fontSize: '15px',
     fontWeight: '600',
-    fontFamily: "'Cinzel', serif",
+    fontFamily: "'Playfair Display', serif",
     borderRadius: '30px',
     transition: 'all 0.3s ease',
     letterSpacing: '2px',
     textTransform: 'uppercase',
-    backgroundColor: 'rgba(30, 41, 59, 0.7)'
+    backgroundColor: 'rgba(30, 41, 59, 0.7)',
   };
 
   const handleHover = (e) => {
     e.currentTarget.style.backgroundColor = 'rgba(51, 65, 85, 0.8)';
     e.currentTarget.style.borderColor = '#cbd5e1';
   };
-  
+
   const handleOut = (e) => {
     e.currentTarget.style.backgroundColor = 'rgba(30, 41, 59, 0.7)';
     e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.2)';
   };
 
   return (
-    <div style={{ 
-      width: '100vw', 
-      height: '100vh', 
+    <div style={{
+      width: '100vw',
+      height: '100vh',
       backgroundColor: '#050508',
       backgroundImage: `
         linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
@@ -51,8 +64,8 @@ function App() {
         radial-gradient(circle at 50% 120%, rgba(20, 80, 180, 0.15) 0%, transparent 70%)
       `,
       backgroundSize: '40px 40px, 40px 40px, 100% 100%, 100% 100%',
-      overflow: 'hidden', 
-      position: 'relative' 
+      overflow: 'hidden',
+      position: 'relative',
     }}>
       {/* Tiêu đề */}
       <div style={{
@@ -62,34 +75,34 @@ function App() {
         transform: 'translateX(-50%)',
         zIndex: 10,
         pointerEvents: 'none',
-        textAlign: 'center'
+        textAlign: 'center',
       }}>
         <h1 style={{
           color: '#e2dcd0',
-          fontFamily: "'Cinzel', serif",
+          fontFamily: "'Playfair Display', serif",
           fontSize: '3rem',
           margin: '0 0 10px 0',
           letterSpacing: '8px',
           fontWeight: 'normal',
-          textShadow: '0 0 20px rgba(226, 220, 208, 0.3)'
+          textShadow: '0 0 20px rgba(226, 220, 208, 0.3)',
         }}>
           TRIẾT HỌC MÁC LÊNIN
         </h1>
-        {isOpen && (
+        {isOpen && chapterInfo && (
           <p style={{
             color: '#a8a29e',
             fontFamily: "'Lora', serif",
             fontSize: '1.2rem',
             margin: 0,
             fontStyle: 'italic',
-            letterSpacing: '1px'
+            letterSpacing: '1px',
           }}>
-            Chương 03: Chủ nghĩa duy vật lịch sử
+            {chapterInfo.title}
           </p>
         )}
       </div>
 
-      {/* Nút lật trang */}
+      {/* Nút điều hướng */}
       <div style={{
         position: 'absolute',
         bottom: '4%',
@@ -97,42 +110,45 @@ function App() {
         transform: 'translateX(-50%)',
         zIndex: 100,
         display: 'flex',
-        gap: '15px'
+        gap: '15px',
       }}>
         {isOpen ? (
           <>
             <button
-              onClick={() => setIsFlipped(false)}
-              disabled={!isFlipped}
+              onClick={handlePrev}
+              disabled={!canGoPrev}
+              aria-label="Trang trước"
               style={{
                 ...btnStyle,
-                opacity: !isFlipped ? 0.4 : 1,
-                cursor: !isFlipped ? 'not-allowed' : 'pointer',
+                opacity: canGoPrev ? 1 : 0.4,
+                cursor: canGoPrev ? 'pointer' : 'not-allowed',
               }}
-              onMouseOver={isFlipped ? handleHover : undefined}
-              onMouseOut={isFlipped ? handleOut : undefined}
+              onMouseOver={canGoPrev ? handleHover : undefined}
+              onMouseOut={canGoPrev ? handleOut : undefined}
             >
-              Trang trước
+              ◂ Trang trước
             </button>
             <button
-              onClick={() => setIsFlipped(true)}
-              disabled={isFlipped}
+              onClick={handleNext}
+              disabled={!canGoNext}
+              aria-label="Trang sau"
               style={{
                 ...btnStyle,
-                opacity: isFlipped ? 0.4 : 1,
-                cursor: isFlipped ? 'not-allowed' : 'pointer',
+                opacity: canGoNext ? 1 : 0.4,
+                cursor: canGoNext ? 'pointer' : 'not-allowed',
               }}
-              onMouseOver={!isFlipped ? handleHover : undefined}
-              onMouseOut={!isFlipped ? handleOut : undefined}
+              onMouseOver={canGoNext ? handleHover : undefined}
+              onMouseOut={canGoNext ? handleOut : undefined}
             >
-              Trang sau
+              Trang sau ▸
             </button>
             <button
               onClick={() => {
                 setIsOpen(false);
-                setIsFlipped(false);
+                setCurrentPage(0);
               }}
-              style={{...btnStyle, cursor: 'pointer'}}
+              aria-label="Đóng sách"
+              style={{ ...btnStyle, cursor: 'pointer' }}
               onMouseOver={handleHover}
               onMouseOut={handleOut}
             >
@@ -142,7 +158,7 @@ function App() {
         ) : (
           <div style={{
             color: '#e2dcd0',
-            fontFamily: "'Cinzel', serif",
+            fontFamily: "'Playfair Display', serif",
             fontSize: '1.2rem',
             letterSpacing: '3px',
             textTransform: 'uppercase',
@@ -152,7 +168,7 @@ function App() {
             padding: '10px 20px',
             borderRadius: '20px',
             background: 'rgba(15, 23, 42, 0.6)',
-            border: '1px solid rgba(226, 232, 240, 0.1)'
+            border: '1px solid rgba(226, 232, 240, 0.1)',
           }}>
             Click vào cuốn sách để mở đọc
           </div>
@@ -162,28 +178,28 @@ function App() {
       {/* 3D Canvas */}
       <Canvas camera={{ position: [0, 1.5, 8], fov: 40 }} shadows>
         <ambientLight intensity={0.8} color="#fff1d6" />
-        
+
         {/* Đèn chiếu thẳng vào mặt trang sách giống đèn đọc sách */}
         <directionalLight position={[0, 6, 8]} intensity={1.2} color="#ffe7b3" />
-        
+
         {/* Ánh sáng chính tạo bóng đổ */}
-        <spotLight 
-          position={[5, 9, 6]} 
-          angle={0.35} 
-          penumbra={0.8} 
-          intensity={4.5} 
-          castShadow 
+        <spotLight
+          position={[5, 9, 6]}
+          angle={0.35}
+          penumbra={0.8}
+          intensity={4.5}
+          castShadow
           shadow-mapSize={[1024, 1024]}
           shadow-bias={-0.0001}
           color="#ffd9a5"
         />
 
         {/* Ánh sáng phụ làm sáng các góc khuất */}
-        <spotLight 
-          position={[-5, 8, -2]} 
-          angle={0.45} 
-          penumbra={0.8} 
-          intensity={2.5} 
+        <spotLight
+          position={[-5, 8, -2]}
+          angle={0.45}
+          penumbra={0.8}
+          intensity={2.5}
           color="#f6e6c3"
         />
 
@@ -193,13 +209,24 @@ function App() {
               {isOpen ? (
                 <>
                   <BookBase />
-                  <StaticPage id="static-page-1" position={[-1.63, 0]} content={<PageContent data={bookData[0]} pageNumber={1} />} />
-                  <StaticPage id="static-page-4" position={[1.63, 0]} content={<PageContent data={bookData[3]} pageNumber={4} />} />
-                  <Page 
-                    isFlipped={isFlipped} 
-                    frontContent={<PageContent data={bookData[1]} pageNumber={2} />} 
-                    backContent={<PageContent data={bookData[2]} pageNumber={3} />} 
-                  />
+                  {/* Render all physical sheets */}
+                  {Array.from({ length: TOTAL_SHEETS }, (_, i) => {
+                    const frontIndex = i * 2;       // even surface index
+                    const backIndex = i * 2 + 1;    // odd surface index
+                    return (
+                      <Page
+                        key={i}
+                        sheetIndex={i}
+                        currentPage={currentPage}
+                        totalSheets={TOTAL_SHEETS}
+                        frontData={pageContents[frontIndex] || null}
+                        backData={pageContents[backIndex] || null}
+                        frontPageNumber={frontIndex + 1}
+                        backPageNumber={backIndex + 1}
+                        goToPage={goToPage}
+                      />
+                    );
+                  })}
                 </>
               ) : (
                 <ClosedBook onOpen={() => setIsOpen(true)} />
@@ -208,28 +235,28 @@ function App() {
           </Suspense>
         </Float>
 
-        <OrbitControls 
-          enableZoom={true} 
-          enablePan={true} 
-          minDistance={6} 
-          maxDistance={10} 
-          minAzimuthAngle={-0.6} 
-          maxAzimuthAngle={0.6} 
-          minPolarAngle={Math.PI / 2 - 0.35} 
+        <OrbitControls
+          enableZoom={true}
+          enablePan={true}
+          minDistance={6}
+          maxDistance={10}
+          minAzimuthAngle={-0.6}
+          maxAzimuthAngle={0.6}
+          minPolarAngle={Math.PI / 2 - 0.35}
           maxPolarAngle={Math.PI / 2 + 0.25}
           makeDefault
         />
 
-        {/* Bóng đổ tiếp xúc tinh tế, chỉ render 1 lần để chống crash GPU */}
-        <ContactShadows 
-          position={[0, -2.8, 0]} 
-          opacity={0.4} 
-          scale={25} 
-          blur={3} 
-          far={4} 
+        {/* Bóng đổ tiếp xúc */}
+        <ContactShadows
+          position={[0, -2.8, 0]}
+          opacity={0.4}
+          scale={25}
+          blur={3}
+          far={4}
           resolution={512}
-          color="#000000" 
-          frames={1} 
+          color="#000000"
+          frames={1}
         />
       </Canvas>
     </div>
