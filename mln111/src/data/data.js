@@ -170,16 +170,5 @@ export const bookData = [
       'Nếu không, Cách mạng xã hội 4.0 sẽ nổ ra để "Công hữu hóa AI".'
     ],
     summary: ""
-  },
-  {
-    id: 16,
-    title: 'Dự báo: Tiến tới "Tự tiêu vong"?',
-    subtitle: "Trong bối cảnh AI hoàn thiện",
-    sections: [
-      "Giai đoạn 1: Nhà nước tăng cường cưỡng chế để bảo vệ tập đoàn (Chuyên chính tập đoàn AI).",
-      "Giai đoạn 2: CM xã hội chuyển quyền sở hữu AI cho nhân loại (Công hữu AI).",
-      "Giai đoạn 3: Khi AI cung cấp đủ mọi nhu cầu, giai cấp biến mất -> Nhà nước thực sự bước vào quá trình Tự tiêu vong."
-    ],
-    summary: ""
   }
 ];
