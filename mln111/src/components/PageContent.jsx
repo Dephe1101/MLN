@@ -34,7 +34,26 @@ export const PageContent = ({ data, pageNumber }) => {
           </p>
         )}
 
-        {data.sections ? (
+        {data.isTable ? (
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', color: '#2b2015' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid #591c10' }}>
+                {data.tableHeaders.map((h, i) => (
+                  <th key={i} style={{ padding: '4px', textAlign: 'left', color: '#591c10', height: '44px', verticalAlign: 'bottom' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.tableRows.map((row, i) => (
+                <tr key={i} style={{ borderBottom: '1px dashed rgba(89,28,16,0.2)' }}>
+                  {row.map((cell, j) => (
+                    <td key={j} style={{ padding: '6px 4px', verticalAlign: 'top', height: '54px' }}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : data.sections ? (
           <div style={{ display: 'grid', gap: '6px' }}>
             {data.sections.map((item, index) => (
               <p key={index} style={{ fontSize: '12px', lineHeight: '1.6', color: '#2b2015', textAlign: 'justify', margin: 0, fontWeight: '500' }}>

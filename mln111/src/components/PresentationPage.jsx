@@ -39,10 +39,18 @@ const TICKER_ITEMS = [
   "Phá bỏ QHSX cũ, thiết lập hình thái mới"
 ];
 
+const CAROUSEL_IMAGES = [
+  '/ai_mastery_2030_1780461492196.png',
+  '/mega_corp_wealth_1780461505559.png',
+  '/obsolete_workers_1780461519194.png',
+  '/robot_tax_protest_1780461530822.png',
+  '/ai_utopia_dystopia_1780461819348.png'
+];
+
 export const PresentationPage = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState('boicanh');
   const [time, setTime] = useState("");
-  const [channel, setChannel] = useState(1);
+  const [currentImageIdx, setCurrentImageIdx] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -52,8 +60,15 @@ export const PresentationPage = ({ onClose }) => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleNextChannel = () => setChannel(prev => (prev % 3) + 1);
-  const handlePrevChannel = () => setChannel(prev => (prev === 1 ? 3 : prev - 1));
+  useEffect(() => {
+    const imgTimer = setInterval(() => {
+      setCurrentImageIdx(prev => (prev + 1) % CAROUSEL_IMAGES.length);
+    }, 5500);
+    return () => clearInterval(imgTimer);
+  }, [currentImageIdx]);
+
+  const handleNextImage = () => setCurrentImageIdx(prev => (prev + 1) % CAROUSEL_IMAGES.length);
+  const handlePrevImage = () => setCurrentImageIdx(prev => (prev === 0 ? CAROUSEL_IMAGES.length - 1 : prev - 1));
 
   return (
     <div className="fixed inset-0 bg-[#0d1117] text-slate-300 font-sans overflow-hidden flex flex-col selection:bg-red-500/30 selection:text-red-200">
@@ -102,28 +117,29 @@ export const PresentationPage = ({ onClose }) => {
             {/* TV Screen */}
             <div className="flex-1 bg-[#161b22] border border-white/5 rounded-2xl p-3 flex flex-col">
               <div className="flex-1 bg-[#090b10] rounded-xl border border-white/5 relative overflow-hidden flex flex-col items-center justify-center group">
-                <img
-                  src="/radar.png"
-                  alt="Radar Visualization"
-                  className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-screen group-hover:opacity-50 transition-opacity duration-1000"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#090b10] via-transparent to-transparent opacity-80" />
-                <div className="absolute inset-0 border-[0.5px] border-cyan-500/10" style={{ backgroundSize: '40px 40px', backgroundImage: 'linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px)' }} />
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={currentImageIdx}
+                    src={CAROUSEL_IMAGES[currentImageIdx]}
+                    alt="Bối cảnh 2030"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </AnimatePresence>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#090b10] via-transparent to-transparent opacity-40" />
 
                 <motion.div
-                  key={activeTab}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="z-10 text-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="z-10 absolute bottom-6 left-6"
                 >
-                  <div className="w-20 h-20 rounded-full border-2 border-dashed border-cyan-500/50 animate-[spin_10s_linear_infinite] flex items-center justify-center mx-auto mb-4">
-                    <div className="w-12 h-12 rounded-full border border-cyan-400/30 flex items-center justify-center">
-                      <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee]" />
-                    </div>
-                  </div>
-                  <h3 className="font-['Cinzel'] text-xl font-bold text-slate-200 tracking-widest mb-2">HỆ THỐNG TRỰC QUAN</h3>
-                  <p className="text-xs text-slate-500 uppercase tracking-widest">Đang tải luồng dữ liệu [{activeTab}]...</p>
+                  <h3 className="font-['Cinzel'] text-xl font-bold text-slate-200 tracking-widest mb-1 drop-shadow-[0_0_8px_rgba(0,255,255,0.5)]">HỆ THỐNG TRỰC QUAN</h3>
+                  <p className="text-xs text-cyan-400 uppercase tracking-widest flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" /> Đang tải luồng dữ liệu 2030...
+                  </p>
                 </motion.div>
               </div>
 
@@ -141,11 +157,10 @@ export const PresentationPage = ({ onClose }) => {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] text-slate-500 uppercase font-bold">KÊNH {channel}</span>
                   <div className="flex border border-white/10 rounded-lg overflow-hidden">
-                    <button onClick={handlePrevChannel} className="p-2 hover:bg-white/5 transition-colors"><ChevronLeft className="w-4 h-4" /></button>
+                    <button onClick={handlePrevImage} className="p-2 hover:bg-white/5 transition-colors"><ChevronLeft className="w-4 h-4" /></button>
                     <div className="w-px bg-white/10" />
-                    <button onClick={handleNextChannel} className="p-2 hover:bg-white/5 transition-colors"><ChevronRight className="w-4 h-4" /></button>
+                    <button onClick={handleNextImage} className="p-2 hover:bg-white/5 transition-colors"><ChevronRight className="w-4 h-4" /></button>
                   </div>
                 </div>
               </div>
